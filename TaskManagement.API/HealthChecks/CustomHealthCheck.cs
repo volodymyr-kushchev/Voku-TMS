@@ -11,8 +11,12 @@ public class CustomHealthCheck : IHealthCheck
     {
         _logger = logger;
     }
+    public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(CheckHealth(context, cancellationToken));
+    }
 
-    public async Task<HealthCheckResult> CheckHealthAsync(
+    private HealthCheckResult CheckHealth(
         HealthCheckContext context,
         CancellationToken cancellationToken = default)
     {
@@ -69,4 +73,5 @@ public class CustomHealthCheck : IHealthCheck
                 });
         }
     }
+
 } 
