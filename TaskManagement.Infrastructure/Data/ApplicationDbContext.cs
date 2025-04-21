@@ -26,7 +26,6 @@ public class ApplicationDbContext : DbContext
             .Property(t => t.Description)
             .HasMaxLength(1000);
 
-        // Configure MassTransit Outbox
         modelBuilder.AddInboxStateEntity();
         modelBuilder.AddOutboxMessageEntity();
         modelBuilder.AddOutboxStateEntity();
