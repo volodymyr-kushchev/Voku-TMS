@@ -117,10 +117,8 @@ The application will be available at:
 ## Limitations
 
 1. No authentication/authorization implemented
-2. No pagination for task listing
-3. No caching layer
-4. Basic error handling
-5. Limited horizontal scaling in current setup
+2. No caching layer
+3. Limited horizontal scaling in current setup
 
 ## Future Improvements
 
