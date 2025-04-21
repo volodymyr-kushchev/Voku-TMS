@@ -9,6 +9,7 @@ services:
       - "8080:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=TaskManagementDb;User Id=sa;Password=Your_password123;TrustServerCertificate=True
       - ConnectionStrings__RabbitMQ=amqp://guest:guest@rabbitmq:5672/
     networks:
       - app-network

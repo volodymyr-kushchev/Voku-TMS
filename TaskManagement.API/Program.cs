@@ -9,6 +9,8 @@ using TaskManagement.Infrastructure.Extensions;
 using TaskManagement.API.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using HealthChecks.UI.Client;
+using FluentValidation;
+using TaskManagement.Application.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +51,7 @@ static void ConfigureServices(WebApplicationBuilder builder)
 {
     builder.Services.AddControllers();
     builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+    builder.Services.AddValidatorsFromAssemblyContaining<CreateTaskRequestValidator>();
 
     ConfigureApiVersioning(builder.Services);
     ConfigureHealthChecksServices(builder);

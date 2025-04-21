@@ -75,6 +75,41 @@ public class TaskService : ITaskService
         return MapToDto(task);
     }
 
+    public async Task<PaginatedResponse<TaskDto>> GetTasksAsync(PaginationRequest? request = null)
+    {
+        var query = _context.Tasks.AsQueryable();
+        var totalCount = await query.CountAsync();
+
+        if (request?.PageNumber.HasValue == true && request?.PageSize.HasValue == true)
+        {
+            var items = await query
+                .Skip((request.PageNumber.Value - 1) * request.PageSize.Value)
+                .Take(request.PageSize.Value)
+                .Select(task => MapToDto(task))
+                .ToListAsync();
+
+            return new PaginatedResponse<TaskDto>
+            {
+                Items = items,
+                TotalCount = totalCount,
+                PageNumber = request.PageNumber.Value,
+                PageSize = request.PageSize.Value
+            };
+        }
+
+        var allItems = await query
+            .Select(task => MapToDto(task))
+            .ToListAsync();
+
+        return new PaginatedResponse<TaskDto>
+        {
+            Items = allItems,
+            TotalCount = totalCount,
+            PageNumber = 1,
+            PageSize = totalCount
+        };
+    }
+
     private static bool IsValidStatusTransition(TEStatus currentStatus, TEStatus newStatus)
     {
         return newStatus switch

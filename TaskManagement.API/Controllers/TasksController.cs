@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TaskManagement.Application.DTOs;
 using TaskManagement.Application.Interfaces;
-using TaskManagement.Domain.Enums;
 
 namespace TaskManagement.API.Controllers;
 
@@ -42,10 +41,10 @@ public class TasksController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TaskDto>>> GetAllTasks()
+    public async Task<ActionResult<PaginatedResponse<TaskDto>>> GetTasks([FromQuery] PaginationRequest? request = null)
     {
-        var tasks = await _taskService.GetAllTasksAsync();
-        return Ok(tasks);
+        var result = await _taskService.GetTasksAsync(request);
+        return Ok(result);
     }
 
     [HttpGet("{id}")]
@@ -62,14 +61,3 @@ public class TasksController : ControllerBase
         }
     }
 }
-
-public class CreateTaskRequest
-{
-    public string Name { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-}
-
-public class UpdateTaskStatusRequest
-{
-    public TEStatus Status { get; set; }
-} 
