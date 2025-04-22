@@ -1,3 +1,6 @@
+// © 2025 Volodymyr Kushchev. Use of this code is restricted to evaluation purposes only.
+// Contact: volodymyr.kushchev@gmail.com
+
 using System.Net.Http.Json;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc.Testing;

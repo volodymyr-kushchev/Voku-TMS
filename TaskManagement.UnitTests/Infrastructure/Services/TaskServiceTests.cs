@@ -1,3 +1,6 @@
+// © 2025 Volodymyr Kushchev. Use of this code is restricted to evaluation purposes only.
+// Contact: volodymyr.kushchev@gmail.com
+
 using FluentAssertions;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
