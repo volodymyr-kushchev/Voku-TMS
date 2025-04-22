@@ -7,12 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using TaskManagement.Application.DTOs;
 using TaskManagement.Application.Exceptions;
-using TaskManagement.Application.Interfaces;
 using TaskManagement.Domain.Entities;
 using TaskManagement.Domain.Enums;
 using TaskManagement.Infrastructure.Data;
 using TaskManagement.Infrastructure.Services;
-using Microsoft.EntityFrameworkCore.InMemory;
 
 namespace TaskManagement.UnitTests.Infrastructure.Services;
 

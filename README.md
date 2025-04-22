@@ -37,10 +37,10 @@ The application follows Clean Architecture principles with the following layers:
 
 1. Clone the repository
 2. Navigate to the project directory
-3. Run the following command to start all services:
+3. Run the following command in docker terminal or powershell to start all services:
 
 ```bash
-docker-compose up --build
+docker-compose up --build -d
 ```
 
 The application will be available at:
