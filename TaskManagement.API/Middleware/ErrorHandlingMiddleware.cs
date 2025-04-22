@@ -2,23 +2,16 @@
 // Contact: volodymyr.kushchev@gmail.com
 
 using System.Net;
-using System.Text.Json;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using TaskManagement.Application.Exceptions;
 
 namespace TaskManagement.API.Middleware;
 
-public class ErrorHandlingMiddleware
+public class ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
 {
-    private readonly RequestDelegate _next;
-    private readonly ILogger<ErrorHandlingMiddleware> _logger;
-
-    public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
-    {
-        _next = next;
-        _logger = logger;
-    }
+    private readonly RequestDelegate _next = next;
+    private readonly ILogger<ErrorHandlingMiddleware> _logger = logger;
 
     public async Task InvokeAsync(HttpContext context)
     {
