@@ -1,3 +1,6 @@
+// © 2025 Volodymyr Kushchev. Use of this code is restricted to evaluation purposes only.
+// Contact: volodymyr.kushchev@gmail.com
+
 using FluentValidation.AspNetCore;
 using MassTransit;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -11,6 +14,8 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using HealthChecks.UI.Client;
 using FluentValidation;
 using TaskManagement.Application.Validators;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -128,7 +133,30 @@ static void ConfigureMassTransit(WebApplicationBuilder builder)
 static void ConfigureSwagger(IServiceCollection services)
 {
     services.AddEndpointsApiExplorer();
-    services.AddSwaggerGen();
+    services.AddSwaggerGen(options =>
+    {
+        var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+        options.IncludeXmlComments(xmlPath);
+
+        options.SwaggerDoc("v1", new OpenApiInfo
+        {
+            Title = "Task Management API",
+            Version = "v1",
+            Description = "A minimal REST API for managing tasks and status transitions. Built as part of a technical evaluation project.",
+            Contact = new OpenApiContact
+            {
+                Name = "Volodymyr Kushchev",
+                Email = "volodymyr.kushchev@gmail.com",
+                Url = new Uri("https://github.com/volodymyr-kushchev")
+            },
+            License = new OpenApiLicense
+            {
+                Name = "Restricted Evaluation License",
+                Url = new Uri("https://github.com/volodymyr-kushchev/Voku-TMS/blob/main/LICENSE")
+            }
+        });
+    });
 }
 
 static void ConfigureMiddleware(WebApplication app)

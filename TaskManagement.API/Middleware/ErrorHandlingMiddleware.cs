@@ -1,3 +1,6 @@
+// © 2025 Volodymyr Kushchev. Use of this code is restricted to evaluation purposes only.
+// Contact: volodymyr.kushchev@gmail.com
+
 using System.Net;
 using System.Text.Json;
 using FluentValidation;
@@ -28,7 +31,9 @@ public class ErrorHandlingMiddleware
             _logger.Log(
                 ex is ValidationException ? LogLevel.Warning : LogLevel.Error,
                 ex,
-                "An exception occurred");
+                "An exception occurred while processing {Method} {Path}",
+                context.Request.Method,
+                context.Request.Path);
 
             await HandleExceptionAsync(context, ex);
         }
@@ -43,6 +48,7 @@ public class ErrorHandlingMiddleware
             ValidationException => (int)HttpStatusCode.BadRequest,
             NotFoundException => (int)HttpStatusCode.NotFound,
             UnauthorizedException => (int)HttpStatusCode.Unauthorized,
+            InvalidStatusTransitionException => (int)HttpStatusCode.BadRequest,
             _ => (int)HttpStatusCode.InternalServerError
         };
 
@@ -54,6 +60,7 @@ public class ErrorHandlingMiddleware
                 ValidationException => "One or more validation errors occurred.",
                 NotFoundException => "The requested resource was not found.",
                 UnauthorizedException => "You are not authorized to perform this action.",
+                InvalidStatusTransitionException => "Invalid status transition.",
                 _ => "An unexpected error occurred."
             },
             Detail = exception.Message,

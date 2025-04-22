@@ -1,6 +1,10 @@
+// © 2025 Volodymyr Kushchev. Use of this code is restricted to evaluation purposes only.
+// Contact: volodymyr.kushchev@gmail.com
+
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using TaskManagement.Application.DTOs;
+using TaskManagement.Application.Exceptions;
 using TaskManagement.Application.Interfaces;
 using TaskManagement.Domain.Contracts;
 using TaskManagement.Domain.Entities;
@@ -39,10 +43,10 @@ public class TaskService : ITaskService
     {
         var task = await _context.Tasks.FindAsync(taskId);
         if (task == null)
-            throw new KeyNotFoundException($"Task with ID {taskId} not found.");
+            throw new NotFoundException($"Task with ID {taskId} not found.");
 
         if (!IsValidStatusTransition(task.Status, newStatus))
-            throw new InvalidOperationException($"Invalid status transition from {task.Status} to {newStatus}");
+            throw new InvalidStatusTransitionException(task.Status, newStatus);
 
         task.Status = newStatus;
 
@@ -70,7 +74,7 @@ public class TaskService : ITaskService
     {
         var task = await _context.Tasks.FindAsync(taskId);
         if (task == null)
-            throw new KeyNotFoundException($"Task with ID {taskId} not found.");
+            throw new NotFoundException($"Task with ID {taskId} not found.");
 
         return MapToDto(task);
     }
