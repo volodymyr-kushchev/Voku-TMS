@@ -70,6 +70,21 @@ public class TasksControllerIntegrationTests : IClassFixture<WebApplicationFacto
     }
 
     [Fact]
+    public async Task CreateTask_ValidData_ReturnsCreated()
+    {
+        var request = new { Name = "Test Task", Description = "Test Description" };
+
+        var response = await _client!.PostAsJsonAsync("/api/v1/tasks", request);
+
+        response.EnsureSuccessStatusCode();
+        var createdTask = await response.Content.ReadFromJsonAsync<TaskDto>();
+        Assert.NotNull(createdTask);
+        Assert.Equal(request.Name, createdTask.Name);
+        Assert.Equal(request.Description, createdTask.Description);
+        Assert.Equal(TEStatus.NotStarted, createdTask.Status);
+    }
+
+    [Fact]
     public async Task UpdateTaskStatus_ValidTransition_ReturnsOk()
     {
         var task = new TaskEntity
@@ -84,12 +99,36 @@ public class TasksControllerIntegrationTests : IClassFixture<WebApplicationFacto
 
         var request = new { Status = TEStatus.InProgress };
 
-        var response = await _client!.PutAsJsonAsync($"/api/tasks/{task.Id}/status", request);
+        var response = await _client!.PatchAsJsonAsync($"/api/v1/tasks/{task.Id}/status", request);
 
         response.EnsureSuccessStatusCode();
         var updatedTask = await response.Content.ReadFromJsonAsync<TaskDto>();
         Assert.NotNull(updatedTask);
         Assert.Equal(TEStatus.InProgress, updatedTask.Status);
+    }
+
+    [Fact]
+    public async Task GetTasks_WithPagination_ReturnsPaginatedResults()
+    {
+        var tasks = new List<TaskEntity>
+        {
+            new() { Name = "Task 1", Description = "Description 1", Status = TEStatus.NotStarted },
+            new() { Name = "Task 2", Description = "Description 2", Status = TEStatus.InProgress },
+            new() { Name = "Task 3", Description = "Description 3", Status = TEStatus.Completed }
+        };
+
+        _dbContext!.Tasks.AddRange(tasks);
+        await _dbContext.SaveChangesAsync();
+
+        var response = await _client!.GetAsync("/api/v1/tasks?pageNumber=1&pageSize=2");
+
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<PaginatedResponse<TaskDto>>();
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Items.Count);
+        Assert.Equal(3, result.TotalCount);
+        Assert.Equal(1, result.PageNumber);
+        Assert.Equal(2, result.PageSize);
     }
 
     public async Task DisposeAsync()

@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagement.Infrastructu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagement.API.Tests", "TaskManagement.API.Tests\TaskManagement.API.Tests.csproj", "{61318BFF-8FAE-457D-BA75-F2F76DFCC74F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagement.UnitTests", "TaskManagement.UnitTests\TaskManagement.UnitTests.csproj", "{A098619D-79D5-48F5-801B-4EF397F0C4C5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,18 @@ Global
 		{61318BFF-8FAE-457D-BA75-F2F76DFCC74F}.Release|x64.Build.0 = Release|Any CPU
 		{61318BFF-8FAE-457D-BA75-F2F76DFCC74F}.Release|x86.ActiveCfg = Release|Any CPU
 		{61318BFF-8FAE-457D-BA75-F2F76DFCC74F}.Release|x86.Build.0 = Release|Any CPU
+		{A098619D-79D5-48F5-801B-4EF397F0C4C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A098619D-79D5-48F5-801B-4EF397F0C4C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A098619D-79D5-48F5-801B-4EF397F0C4C5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A098619D-79D5-48F5-801B-4EF397F0C4C5}.Debug|x64.Build.0 = Debug|Any CPU
+		{A098619D-79D5-48F5-801B-4EF397F0C4C5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A098619D-79D5-48F5-801B-4EF397F0C4C5}.Debug|x86.Build.0 = Debug|Any CPU
+		{A098619D-79D5-48F5-801B-4EF397F0C4C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A098619D-79D5-48F5-801B-4EF397F0C4C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A098619D-79D5-48F5-801B-4EF397F0C4C5}.Release|x64.ActiveCfg = Release|Any CPU
+		{A098619D-79D5-48F5-801B-4EF397F0C4C5}.Release|x64.Build.0 = Release|Any CPU
+		{A098619D-79D5-48F5-801B-4EF397F0C4C5}.Release|x86.ActiveCfg = Release|Any CPU
+		{A098619D-79D5-48F5-801B-4EF397F0C4C5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

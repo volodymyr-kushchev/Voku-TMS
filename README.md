@@ -151,3 +151,35 @@ The application will be available at:
    - Add auto-scaling policies
    - Implement database sharding
    - Add read replicas
+
+## Testing
+
+The solution includes both unit tests and integration tests:
+
+### Unit Tests
+- Located in `TaskManagement.UnitTests` project
+- Uses xUnit as the testing framework
+- Uses Moq for mocking dependencies
+- Uses FluentAssertions for more readable assertions
+- Follows AAA (Arrange-Act-Assert) pattern
+- Tests domain entities, application services, and business logic
+
+### Integration Tests
+- Located in `TaskManagement.API.Tests` project
+- Tests API endpoints and database operations
+- Uses TestContainers for isolated testing environment
+- Tests real database interactions and message bus operations
+
+### Running Tests
+To run all tests:
+```bash
+dotnet test
+```
+
+To run tests with coverage report:
+```bash
+dotnet test --collect:"XPlat Code Coverage"
+```
+
+### Test Coverage
+The project uses Coverlet for code coverage reporting. Coverage reports are generated in the `TestResults` directory after running tests with coverage collection enabled.
