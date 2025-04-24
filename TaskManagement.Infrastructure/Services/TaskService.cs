@@ -2,55 +2,44 @@
 // Contact: volodymyr.kushchev@gmail.com
 
 using MassTransit;
-using Microsoft.EntityFrameworkCore;
 using TaskManagement.Application.DTOs;
 using TaskManagement.Application.Exceptions;
 using TaskManagement.Application.Interfaces;
 using TaskManagement.Domain.Contracts;
 using TaskManagement.Domain.Entities;
 using TaskManagement.Domain.Enums;
-using TaskManagement.Infrastructure.Data;
+using TaskManagement.Domain.Exceptions;
+using TaskManagement.Domain.Interfaces;
 
 namespace TaskManagement.Infrastructure.Services;
 
 public class TaskService : ITaskService
 {
-    private readonly ApplicationDbContext _context;
+    private readonly ITaskRepository _taskRepository;
     private readonly IPublishEndpoint _publishEndpoint;
 
-    public TaskService(ApplicationDbContext context, IPublishEndpoint publishEndpoint)
+    public TaskService(ITaskRepository taskRepository, IPublishEndpoint publishEndpoint)
     {
-        _context = context;
+        _taskRepository = taskRepository;
         _publishEndpoint = publishEndpoint;
     }
 
     public async Task<TaskDto> CreateTaskAsync(string name, string description)
     {
-        var task = new TaskEntity
-        {
-            Name = name,
-            Description = description,
-            Status = TEStatus.NotStarted
-        };
-
-        _context.Tasks.Add(task);
-        await _context.SaveChangesAsync();
-
-        return MapToDto(task);
+        var task = new TaskEntity(name, description);
+        var createdTask = await _taskRepository.AddAsync(task);
+        return MapToDto(createdTask);
     }
 
     public async Task<TaskDto> UpdateTaskStatusAsync(int taskId, TEStatus newStatus)
     {
-        var task = await _context.Tasks.FindAsync(taskId);
+        var task = await _taskRepository.GetByIdAsync(taskId);
         if (task == null)
             throw new NotFoundException($"Task with ID {taskId} not found.");
 
-        if (!IsValidStatusTransition(task.Status, newStatus))
-            throw new InvalidStatusTransitionException(task.Status, newStatus);
+        task.ChangeStatus(newStatus);
 
-        task.Status = newStatus;
-
-        if (newStatus == TEStatus.Completed)
+        if (task.IsCompleted)
         {
             await _publishEndpoint.Publish(new TaskCompletedEvent
             {
@@ -60,19 +49,19 @@ public class TaskService : ITaskService
             });
         }
 
-        await _context.SaveChangesAsync();
+        await _taskRepository.UpdateAsync(task);
         return MapToDto(task);
     }
 
     public async Task<IEnumerable<TaskDto>> GetAllTasksAsync()
     {
-        var tasks = await _context.Tasks.ToListAsync();
+        var tasks = await _taskRepository.GetAllAsync();
         return tasks.Select(MapToDto);
     }
 
     public async Task<TaskDto> GetTaskByIdAsync(int taskId)
     {
-        var task = await _context.Tasks.FindAsync(taskId);
+        var task = await _taskRepository.GetByIdAsync(taskId);
         if (task == null)
             throw new NotFoundException($"Task with ID {taskId} not found.");
 
@@ -81,47 +70,30 @@ public class TaskService : ITaskService
 
     public async Task<PaginatedResponse<TaskDto>> GetTasksAsync(PaginationRequest? request = null)
     {
-        var query = _context.Tasks.AsQueryable();
-        var totalCount = await query.CountAsync();
-
         if (request?.PageNumber.HasValue == true && request?.PageSize.HasValue == true)
         {
-            var items = await query
-                .Skip((request.PageNumber.Value - 1) * request.PageSize.Value)
-                .Take(request.PageSize.Value)
-                .Select(task => MapToDto(task))
-                .ToListAsync();
+            var result = await _taskRepository.GetPaginatedAsync(
+                request.PageNumber.Value,
+                request.PageSize.Value);
 
             return new PaginatedResponse<TaskDto>
             {
-                Items = items,
-                TotalCount = totalCount,
-                PageNumber = request.PageNumber.Value,
-                PageSize = request.PageSize.Value
+                Items = [.. result.Items.Select(MapToDto)],
+                TotalCount = result.TotalCount,
+                PageNumber = result.PageNumber,
+                PageSize = result.PageSize
             };
         }
 
-        var allItems = await query
-            .Select(task => MapToDto(task))
-            .ToListAsync();
+        var allTasks = await _taskRepository.GetAllAsync();
+        var totalCount = await _taskRepository.GetTotalCountAsync();
 
         return new PaginatedResponse<TaskDto>
         {
-            Items = allItems,
+            Items = [.. allTasks.Select(MapToDto)],
             TotalCount = totalCount,
             PageNumber = 1,
             PageSize = totalCount
-        };
-    }
-
-    private static bool IsValidStatusTransition(TEStatus currentStatus, TEStatus newStatus)
-    {
-        return newStatus switch
-        {
-            TEStatus.NotStarted => false,
-            TEStatus.InProgress => currentStatus == TEStatus.NotStarted,
-            TEStatus.Completed => currentStatus == TEStatus.InProgress,
-            _ => false
         };
     }
 
@@ -132,7 +104,9 @@ public class TaskService : ITaskService
             Id = task.Id,
             Name = task.Name,
             Description = task.Description,
-            Status = task.Status
+            Status = task.Status,
+            CreatedAt = task.CreatedAt,
+            LastModifiedAt = task.LastModifiedAt
         };
     }
 } 

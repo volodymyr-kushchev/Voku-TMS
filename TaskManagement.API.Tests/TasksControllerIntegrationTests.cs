@@ -90,12 +90,7 @@ public class TasksControllerIntegrationTests : IClassFixture<WebApplicationFacto
     [Fact]
     public async Task UpdateTaskStatus_ValidTransition_ReturnsOk()
     {
-        var task = new TaskEntity
-        {
-            Name = "Test Task",
-            Description = "Test Description",
-            Status = TEStatus.NotStarted
-        };
+        var task = new TaskEntity("Test Task", "Test Description");
 
         _dbContext!.Tasks.Add(task);
         await _dbContext.SaveChangesAsync();
@@ -115,9 +110,9 @@ public class TasksControllerIntegrationTests : IClassFixture<WebApplicationFacto
     {
         var tasks = new List<TaskEntity>
         {
-            new() { Name = "Task 1", Description = "Description 1", Status = TEStatus.NotStarted },
-            new() { Name = "Task 2", Description = "Description 2", Status = TEStatus.InProgress },
-            new() { Name = "Task 3", Description = "Description 3", Status = TEStatus.Completed }
+            new("Task 1", "Description 1"),
+            new("Task 2", "Description 2"),
+            new("Task 3", "Description 3")
         };
 
         _dbContext!.Tasks.AddRange(tasks);

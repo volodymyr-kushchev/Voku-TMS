@@ -4,6 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <InternalsVisibleTo>TaskManagement.API.Tests</InternalsVisibleTo>
+    <InternalsVisibleTo>TaskManagement.UnitTests</InternalsVisibleTo>
   </PropertyGroup>
 
 </Project>
