@@ -8,7 +8,6 @@
     <CollectCoverage>true</CollectCoverage>
     <CoverletOutputFormat>cobertura</CoverletOutputFormat>
     <CoverletOutput>./TestResults/</CoverletOutput>
-    <InternalsVisibleTo>TaskManagement.Domain</InternalsVisibleTo>
   </PropertyGroup>
 
   <ItemGroup>

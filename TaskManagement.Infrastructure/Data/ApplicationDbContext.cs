@@ -20,24 +20,14 @@ public class ApplicationDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<TaskEntity>(entity =>
-        {
-            entity.Property(t => t.Name)
-                .IsRequired()
-                .HasMaxLength(200);
+        modelBuilder.Entity<TaskEntity>()
+            .Property(t => t.Name)
+            .IsRequired()
+            .HasMaxLength(200);
 
-            entity.Property(t => t.Description)
-                .HasMaxLength(1000);
-
-            entity.Property(t => t.CreatedAt)
-                .IsRequired();
-
-            entity.Property(t => t.LastModifiedAt)
-                .IsRequired();
-
-            entity.Property(t => t.Status)
-                .IsRequired();
-        });
+        modelBuilder.Entity<TaskEntity>()
+            .Property(t => t.Description)
+            .HasMaxLength(1000);
 
         modelBuilder.AddInboxStateEntity();
         modelBuilder.AddOutboxMessageEntity();

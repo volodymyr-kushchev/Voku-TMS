@@ -5,25 +5,20 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TaskManagement.Application.Interfaces;
-using TaskManagement.Domain.Interfaces;
 using TaskManagement.Infrastructure.Data;
-using TaskManagement.Infrastructure.Repositories;
 using TaskManagement.Infrastructure.Services;
 
 namespace TaskManagement.Infrastructure.Extensions;
 
-public static class ServiceCollectionExtensions
+public static class InfrastructureExtensions
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        // Database
+        // Add DbContext
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-        // Repositories
-        services.AddScoped<ITaskRepository, TaskRepository>();
-
-        // Services
+        // Add Application Services
         services.AddScoped<ITaskService, TaskService>();
 
         return services;

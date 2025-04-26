@@ -5,7 +5,6 @@ using System.Net;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using TaskManagement.Application.Exceptions;
-using TaskManagement.Domain.Exceptions;
 
 namespace TaskManagement.API.Middleware;
 
@@ -43,7 +42,6 @@ public class ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandling
             NotFoundException => (int)HttpStatusCode.NotFound,
             UnauthorizedException => (int)HttpStatusCode.Unauthorized,
             InvalidStatusTransitionException => (int)HttpStatusCode.BadRequest,
-            DomainException => (int)HttpStatusCode.BadRequest,
             _ => (int)HttpStatusCode.InternalServerError
         };
 
@@ -56,7 +54,6 @@ public class ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandling
                 NotFoundException => "The requested resource was not found.",
                 UnauthorizedException => "You are not authorized to perform this action.",
                 InvalidStatusTransitionException => "Invalid status transition.",
-                DomainException => "A domain rule was violated.",
                 _ => "An unexpected error occurred."
             },
             Detail = exception.Message,
@@ -70,11 +67,6 @@ public class ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandling
                 .ToDictionary(
                     g => g.Key,
                     g => g.Select(e => e.ErrorMessage).ToArray());
-        }
-        else if (exception is InvalidStatusTransitionException statusEx)
-        {
-            problemDetails.Extensions["currentStatus"] = statusEx.CurrentStatus.ToString();
-            problemDetails.Extensions["newStatus"] = statusEx.NewStatus.ToString();
         }
 
         context.Response.StatusCode = statusCode;
